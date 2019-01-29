@@ -1,0 +1,19 @@
+language: cpp
+sudo: required
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      compiler: gcc
+    - os: linux
+      dist: xenial
+      compiler: clang
+    - os: osx
+      compiler: clang
+
+before_install:
+  - ./before_install.sh
+install:
+  - ./install_gtest.sh
+script:
+  - ./build.sh
