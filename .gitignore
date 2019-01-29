@@ -1,0 +1,9 @@
+# Clion
+/.idea
+/cmake-build-debug
+
+# Ext
+/ext
+
+# Build
+/build
