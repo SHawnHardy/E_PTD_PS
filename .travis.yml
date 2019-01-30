@@ -1,5 +1,4 @@
 language: cpp
-sudo: required
 matrix:
   include:
     - os: linux
@@ -11,9 +10,8 @@ matrix:
     - os: osx
       compiler: clang
 
-before_install:
-  - ./before_install.sh
 install:
+  - mkdir ext
   - ./install_gtest.sh
 script:
   - ./build.sh
