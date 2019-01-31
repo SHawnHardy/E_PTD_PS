@@ -1,6 +1,6 @@
 /**
  * @file tau_matrix.h
- * @version v0.2
+ * @version v0.3
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License
@@ -14,18 +14,18 @@
 #include <iostream>
 
 namespace sh {
-    class TauMatrix {
+    class TimeDelayMatrix {
     public:
         const int Size_;
 
-        explicit TauMatrix(int size) : Size_(size) {
+        explicit TimeDelayMatrix(const int size) : Size_(size) {
             tau_ = new int *[Size_];
             for (int i = 0; i < Size_; ++i) {
                 tau_[i] = new int[Size_]();
             }
         }
 
-        ~TauMatrix() {
+        ~TimeDelayMatrix() {
             for (int i = 0; i < Size_; ++i) {
                 delete[] tau_[i];
             }
@@ -47,7 +47,7 @@ namespace sh {
         int **tau_ = nullptr;
     };
 
-    void serialize_TauMatrix(const TauMatrix &m, std::ostream &osm) {
+    void serialize_TauMatrix(const TimeDelayMatrix &m, std::ostream &osm) {
         osm << m.Size_ << std::endl;
         for (int i = 0; i < m.Size_; ++i) {
             for (int j = 0; j < m.Size_; ++j) {
@@ -56,10 +56,10 @@ namespace sh {
         }
     }
 
-    TauMatrix *deserialize_TauMatrix(std::istream &ism) {
+    TimeDelayMatrix *deserialize_TauMatrix(std::istream &ism) {
         int size;
         ism >> size;
-        auto result = new TauMatrix(size);
+        auto result = new TimeDelayMatrix(size);
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 ism >> (*result)[i][j];

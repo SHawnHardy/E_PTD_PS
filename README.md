@@ -22,5 +22,5 @@ Effects of partial time delays on phase synchronization in Watts-Strogatz small-
 
 ## 进度
 * ws_network(v0.3) **Testing...**
-* tau_matrix(v0.1) **Testing...**
+* time_delay_matrix(v0.1) **Testing...**
 * fhn_model **In development**
