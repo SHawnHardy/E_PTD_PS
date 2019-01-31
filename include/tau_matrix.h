@@ -1,6 +1,6 @@
 /**
  * @file tau_matrix.h
- * @version v0.1
+ * @version v0.2
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License
@@ -18,11 +18,18 @@ namespace sh {
     public:
         const int Size_;
 
-        TauMatrix(int size) : Size_(size) {
+        explicit TauMatrix(int size) : Size_(size) {
             tau_ = new int *[Size_];
             for (int i = 0; i < Size_; ++i) {
                 tau_[i] = new int[Size_]();
             }
+        }
+
+        ~TauMatrix() {
+            for (int i = 0; i < Size_; ++i) {
+                delete[] tau_[i];
+            }
+            delete[] tau_;
         }
 
         void allTheSame(int x) {
@@ -37,7 +44,7 @@ namespace sh {
         }
 
     private:
-        int **tau_;
+        int **tau_ = nullptr;
     };
 
     void serialize_TauMatrix(const TauMatrix &m, std::ostream &osm) {

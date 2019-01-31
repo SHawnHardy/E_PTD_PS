@@ -1,6 +1,6 @@
 /**
  * @file test_tau_matrix.cpp
- * @version v0.1
+ * @version v0.2
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License

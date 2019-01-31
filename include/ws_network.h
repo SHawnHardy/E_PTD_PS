@@ -1,6 +1,6 @@
 /**
  * @file ws_network.h
- * @version v0.3
+ * @version v0.4
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License
@@ -74,7 +74,7 @@ namespace sh {
         }
 
         WsNetwork(int num_vertices, int num_edges, int regular_k, double reconnection_pr,
-                  int edges[], int degree[]) :
+                  const int edges[], const int degree[]) :
                 Num_Vertices_(num_vertices), Num_Edges_(num_edges),
                 Regular_K_(regular_k), Reconnection_Pr_(reconnection_pr) {
             adjacency_matrix_ = new bool *[Num_Vertices_];
@@ -135,9 +135,9 @@ namespace sh {
         }
 
     private:
-        bool **adjacency_matrix_;
-        int *edges_;
-        int **forward_star_;
+        bool **adjacency_matrix_ = nullptr;
+        int *edges_ = nullptr;
+        int **forward_star_ = nullptr;
     };
 
     void serialize_WsNetwork(const WsNetwork &w, std::ostream &osm) {
