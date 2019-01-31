@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(./include)
 
-option(CODE_COVERAGE "This is a option for code coverage" ON)
+option(CODE_COVERAGE "This is a option for code coverage" OFF)
 
 if(CODE_COVERAGE STREQUAL "ON")
     set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
