@@ -1,0 +1,26 @@
+language: cpp
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      compiler: gcc
+    - os: linux
+      dist: xenial
+      compiler: clang
+    - os: osx
+      compiler: clang
+
+addons:
+  apt:
+    packages: lcov
+  homebrew:
+    packages: lcov
+
+install:
+  - mkdir ext
+  - ./install_gtest.sh
+script:
+  - ./build.sh
+after_success:
+  - ./codecov.sh
+  - bash <(curl -s https://codecov.io/bash) -f ./build/coverage.info || echo "Codecov did not collect coverage reports"
