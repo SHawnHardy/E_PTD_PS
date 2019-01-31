@@ -83,11 +83,11 @@ namespace sh {
 
             memcpy(edges_, edges, sizeof(int) * num_edges);
             int *point = edges_;
-            for (int i = 0; i < Num_Vertices_; i++) {
+            for (int i = 0; i < Num_Vertices_; ++i) {
                 forward_star_[i] = point;
 
                 adjacency_matrix_[i] = new bool[Num_Vertices_]();
-                for (int j = 0; j < degree[i]; j++) {
+                for (int j = 0; j < degree[i]; ++j) {
                     adjacency_matrix_[i][*point] = true;
                     ++point;
                 }
@@ -144,7 +144,7 @@ namespace sh {
         osm << w.Num_Vertices_ << std::endl;
         osm << w.Num_Edges_ << std::endl;
         osm << w.Regular_K_ << ' ' << w.Reconnection_Pr_ << std::endl;
-        for (int i = 0; i < w.Num_Vertices_; i++) {
+        for (int i = 0; i < w.Num_Vertices_; ++i) {
             auto edge = w.get_edges(i);
             osm << edge.second - edge.first;
             while (edge.first != edge.second) {
@@ -162,9 +162,9 @@ namespace sh {
         int *edge = new int[num_edges];
         int *degree = new int[num_vertices];
         int *point = edge;
-        for (int i = 0; i < num_vertices; i++) {
+        for (int i = 0; i < num_vertices; ++i) {
             ism >> degree[i];
-            for (int j = 0; j < degree[i]; j++) {
+            for (int j = 0; j < degree[i]; ++j) {
                 ism >> *point;
                 ++point;
             }
