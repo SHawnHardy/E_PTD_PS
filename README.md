@@ -1,7 +1,7 @@
 # E_PTD_PS
 
-[![codecov](https://codecov.io/gh/SHawnHardy/E_PTD_PS/branch/master/graph/badge.svg)](https://codecov.io/gh/SHawnHardy/E_PTD_PS)
 [![Build Status](https://travis-ci.org/SHawnHardy/E_PTD_PS.svg?branch=master)](https://travis-ci.org/SHawnHardy/E_PTD_PS)
+[![codecov](https://codecov.io/gh/SHawnHardy/E_PTD_PS/branch/master/graph/badge.svg)](https://codecov.io/gh/SHawnHardy/E_PTD_PS)
 ![Lisence](https://img.shields.io/github/license/SHawnHardy/E_PTD_PS.svg?style=flat)
 
 Effects of partial time delays on phase synchronization in Watts-Strogatz small-world FitzHugh-Nagumo neuronal networks.
@@ -21,5 +21,6 @@ Effects of partial time delays on phase synchronization in Watts-Strogatz small-
 控制，数据可视化由Python处理
 
 ## 进度
-* ws_network(v0.2) **Testing...**
-* tau_matrix **In development**
+* ws_network(v0.3) **Testing...**
+* tau_matrix(v0.1) **Testing...**
+* fhn_model **In development**

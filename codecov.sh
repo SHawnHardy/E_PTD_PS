@@ -17,12 +17,13 @@ if [ "$TRAVIS_COMPILER" == "clang" -a "$TRAVIS_OS_NAME" == "linux" ];then
     echo '#!/bin/bash
         exec llvm-cov gcov "$@"' > llvm-gcov.sh
     chmod +x ./llvm-gcov.sh
-    lcov --directory . --base-directory . --gcov-tool ./llvm-gcov.sh --capture -o coverage.info
+    lcov --directory . --base-directory . --gcov-tool ./llvm-gcov.sh --capture --output-file coverage.info
 else
     # capture coverage info
     lcov --directory . --capture --output-file coverage.info
-    # filter out system
-    lcov --remove coverage.info '/usr/*' '/usr/lib/*' --output-file coverage.info
-    # debug info
-    lcov --list coverage.info
 fi
+
+# filter out system
+lcov --remove coverage.info '/usr/*' '/usr/lib/*' --output-file coverage.info
+# debug info
+lcov --list coverage.info

@@ -1,6 +1,6 @@
 /**
  * @file test_ws_network.cpp
- * @version v0.2
+ * @version v0.3
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License
@@ -16,9 +16,9 @@
 
 void cmpAdjacencyMatrixAndForwardStar(const sh::WsNetwork &w) {
     int v = w.Num_Vertices_;
-    for (int i = 0; i < v; i++) {
+    for (int i = 0; i < v; ++i) {
         auto edge = w.get_edges(i);
-        for (int j = 0; j < v; j++) {
+        for (int j = 0; j < v; ++j) {
             if (*(edge.first) == j) {
                 ASSERT_TRUE(w.check(i, j));
                 ++edge.first;
@@ -40,7 +40,7 @@ TEST(WsNetworkTest, RegularNetwork) {
     ASSERT_NEAR(tmp.Reconnection_Pr_, -1.0, 1E-8);
     cmpAdjacencyMatrixAndForwardStar(tmp);
 
-    for (int i = 0; i < Num_Vertices; i++) {
+    for (int i = 0; i < Num_Vertices; ++i) {
         auto edges = tmp.get_edges(i);
         ASSERT_EQ(edges.second - edges.first, 2 * Regular_K);
         while (edges.first != edges.second) {
@@ -87,7 +87,7 @@ TEST(WsNetworkTest, WsNetwork) {
     }
 }
 
-TEST(WsNetworkTest, serialize) {
+TEST(WsNetworkTest, Serialize) {
     const int Num_Vertices = 200;
     const int Regular_K = 10;
     const double Reconnection_Pr = 0.2;
@@ -104,8 +104,8 @@ TEST(WsNetworkTest, serialize) {
     ASSERT_EQ(source.Regular_K_, result->Regular_K_);
     ASSERT_NEAR(source.Reconnection_Pr_, result->Reconnection_Pr_, 1E-8);
     cmpAdjacencyMatrixAndForwardStar(*result);
-    for (int i = 0; i < Num_Vertices; i++) {
-        for (int j = 0; j < Num_Vertices; j++) {
+    for (int i = 0; i < Num_Vertices; ++i) {
+        for (int j = 0; j < Num_Vertices; ++j) {
             ASSERT_EQ(source.check(i, j), result->check(i, j));
         }
     }
