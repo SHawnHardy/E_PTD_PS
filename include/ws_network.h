@@ -1,6 +1,6 @@
 /**
  * @file ws_network.h
- * @version v0.2
+ * @version v0.3
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License
@@ -100,6 +100,8 @@ namespace sh {
                 delete[] adjacency_matrix_[i];
             }
             delete[] adjacency_matrix_;
+            delete[] edges_;
+            delete[] forward_star_;
         }
 
         std::pair<int *, int *> get_edges(int x) const {
