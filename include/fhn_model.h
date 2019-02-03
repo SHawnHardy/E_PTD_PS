@@ -1,8 +1,8 @@
 /**
  * @file fhn_model.h
- * @version v0.1
+ * @version v0.2
  * @author SHawnHardy
- * @date 2019-01-31
+ * @date 2019-02-03
  * @copyright MIT License
  */
 
@@ -13,6 +13,7 @@
 #include <cstring>
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <random>
 #include <string>
 
@@ -139,7 +140,7 @@ namespace sh {
 
             std::random_device rd;
             std::mt19937 gen(rd());
-            std::uniform_real_distribution<> dtb;
+            std::uniform_real_distribution<> dtb(0, 1);
 
             for (int i = 0; i < Size_; ++i) {
                 y_[i] = 0.0;
@@ -187,13 +188,15 @@ namespace sh {
                     }
                     current_[i] = next;
                 }
-                mean_x /= Size_;
-                qsin +=
-                        2.0 * mean_x * sin(2.0 * PI * now / Config_->subthreshold_signal_period);
-                qcos +=
-                        2.0 * mean_x * cos(2.0 * PI * now / Config_->subthreshold_signal_period);
-                data_num++;
 
+                if (now >= steady_time_) {
+                    mean_x /= Size_;
+                    qsin +=
+                            2.0 * mean_x * sin(2.0 * PI * now * step_ / Config_->subthreshold_signal_period);
+                    qcos +=
+                            2.0 * mean_x * cos(2.0 * PI * now * step_ / Config_->subthreshold_signal_period);
+                    data_num++;
+                }
             }
             qsin /= data_num;
             qcos /= data_num;

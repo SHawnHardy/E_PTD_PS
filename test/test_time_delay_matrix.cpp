@@ -1,5 +1,5 @@
 /**
- * @file test_tau_matrix.cpp
+ * @file test_time_delay_matrix.cpp
  * @version v0.3
  * @author SHawnHardy
  * @date 2019-01-31
