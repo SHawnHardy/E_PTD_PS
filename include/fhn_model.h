@@ -1,6 +1,6 @@
 /**
  * @file fhn_model.h
- * @version v0.4
+ * @version v0.5
  * @author SHawnHardy
  * @date 2019-02-04
  * @copyright MIT License
@@ -92,11 +92,11 @@ namespace sh {
             delete[] dy_;
         }
 
-        void set_time(double step_duration, int start_time, int steady_time, int end_time) {
-            step_ = step_duration;
+        void set_time(int start_time, int steady_time, int end_time, double step_duration = 0.001) {
             start_time_ = start_time;
             steady_time_ = steady_time;
             end_time_ = end_time;
+            step_ = step_duration;
         }
 
         void enableLogX(std::ostream *osm, bool (*log_x_filter)(int)) {
@@ -160,8 +160,9 @@ namespace sh {
                 getDx();
                 getDy(now);
 
+                bool log_x_this_time = log_x_ & log_x_filter_(now);
                 double mean_x = 0.0;
-                if (log_x_) {
+                if (log_x_this_time) {
                     (*log_x_osm_) << now * step_ << ',';
                 }
                 for (int i = 0; i < Size_; ++i) {
@@ -184,7 +185,7 @@ namespace sh {
                                                   << std::endl;
                             }
                         }
-                        if (log_x_) {
+                        if (log_x_this_time) {
                             (*log_x_osm_) << x_[i][current] << (i == (Size_ - 1) ? '\n' : ',');
                         }
 

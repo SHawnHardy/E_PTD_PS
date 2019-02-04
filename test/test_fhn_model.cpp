@@ -1,6 +1,6 @@
 /**
  * @file test_fhn_model.cpp
- * @version v0.4
+ * @version v0.5
  * @author SHawnHardy
  * @date 2019-02-04
  * @copyright MIT License
@@ -43,5 +43,38 @@ TEST(FhnModelSolverTest, Initial) {
     sh::TimeDelayMatrix tau(200);
     sh::FhnModelConfig config;
     sh::FhnModelSolver solver(&network, &tau, &config, &(std::cout));
+    solver.solve();
+
+    std::ostringstream result_osm;
+    solver.set_osm(&result_osm);
+    solver.solve();
+}
+
+TEST(FhnModelSolverTest, LogX) {
+    sh::WsNetwork network(200, 10, 0.15);
+    sh::TimeDelayMatrix tau(200);
+    sh::FhnModelConfig config;
+    sh::FhnModelSolver solver(&network, &tau, &config, &(std::cout));
+    solver.set_time(0, 0, 10);
+
+    std::ostringstream log_x_osm;
+    solver.enableLogX(&log_x_osm, [](int now){return true;});
+    solver.solve();
+
+    solver.disableLogX();
+    solver.solve();
+}
+
+TEST(FhnModelSolverTest, LogPulse) {
+    sh::WsNetwork network(200, 10, 0.15);
+    sh::TimeDelayMatrix tau(200);
+    sh::FhnModelConfig config(0.01);
+    sh::FhnModelSolver solver(&network, &tau, &config, &(std::cout));
+
+    std::ostringstream log_pulse_osm;
+    solver.enableLogPulse(&log_pulse_osm);
+    solver.solve();
+
+    solver.disableLogPulse();
     solver.solve();
 }
