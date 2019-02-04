@@ -1,6 +1,6 @@
 /**
  * @file test_ws_network.cpp
- * @version v0.3
+ * @version v0.4
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License

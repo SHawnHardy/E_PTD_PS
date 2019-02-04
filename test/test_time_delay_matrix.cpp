@@ -1,6 +1,6 @@
 /**
- * @file test_tau_matrix.cpp
- * @version v0.1
+ * @file test_time_delay_matrix.cpp
+ * @version v0.3
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License
@@ -11,11 +11,11 @@
 
 #include <gtest/gtest.h>
 
-#include "tau_matrix.h"
+#include "time_delay_matrix.h"
 
 TEST(TauMatrixTest, TauMatrix) {
     const int Size = 200;
-    sh::TauMatrix m(Size);
+    sh::TimeDelayMatrix m(Size);
     for (int i = 0; i < Size; ++i) {
         for (int j = 0; j < Size; ++j) {
             ASSERT_EQ(m[i][j], 0);
@@ -41,7 +41,7 @@ TEST(TauMatrixTest, TauMatrix) {
 
 TEST(TauMatrixTest, AllTheSame) {
     const int Size = 200;
-    sh::TauMatrix m(Size);
+    sh::TimeDelayMatrix m(Size);
     m.allTheSame(10);
     for (int i = 0; i < Size; ++i) {
         for (int j = 0; j < Size; ++j) {
@@ -57,7 +57,7 @@ TEST(TauMatrixTest, Serialize) {
     std::uniform_int_distribution<> int_dtb(0, 1000000007);
     int test_data[Size][Size];
 
-    sh::TauMatrix source(Size);
+    sh::TimeDelayMatrix source(Size);
     for (int i = 0; i < Size; ++i) {
         for (int j = 0; j < Size; ++j) {
             source[i][j] = test_data[i][j] = int_dtb(gen);
@@ -68,7 +68,7 @@ TEST(TauMatrixTest, Serialize) {
     sh::serialize_TauMatrix(source, osm);
 
     std::istringstream ism(osm.str());
-    sh::TauMatrix *result = sh::deserialize_TauMatrix(ism);
+    sh::TimeDelayMatrix *result = sh::deserialize_TauMatrix(ism);
 
     for (int i = 0; i < Size; ++i) {
         for (int j = 0; j < Size; ++j) {
