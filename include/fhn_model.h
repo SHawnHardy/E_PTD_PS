@@ -1,6 +1,6 @@
 /**
  * @file fhn_model.h
- * @version v0.5
+ * @version v0.6
  * @author SHawnHardy
  * @date 2019-02-04
  * @copyright MIT License
@@ -71,7 +71,7 @@ namespace sh {
                 for (int j = 0; j < Size_; ++j) {
                     buf_len = std::max(buf_len, (*Tau_Matrix_)[i][j]);
                 }
-                buffer_length_[i] = buf_len + 1;
+                buffer_length_[i] = buf_len + 2;
                 x_[i] = new double[buffer_length_[i]];
             }
 
