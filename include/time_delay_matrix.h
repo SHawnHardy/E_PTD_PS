@@ -1,6 +1,6 @@
 /**
  * @file tau_matrix.h
- * @version v0.3
+ * @version v0.4
  * @author SHawnHardy
  * @date 2019-01-31
  * @copyright MIT License
@@ -12,6 +12,7 @@
 #include <cstring>
 #include <algorithm>
 #include <iostream>
+#include <random>
 
 namespace sh {
     class TimeDelayMatrix {
@@ -36,6 +37,19 @@ namespace sh {
             std::fill(tau_[0], tau_[0] + Size_, x);
             for (int i = 1; i < Size_; ++i) {
                 memcpy(tau_[i], tau_[0], sizeof(int) * Size_);
+            }
+        }
+
+        void partialTimeDelay(double pr, int time_delay) {
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<> dtb(0.0, 1.0);
+
+            for (int i = 0; i < Size_; ++i) {
+                tau_[i][i] = 0;
+                for (int j = (i + 1); j < Size_; ++j) {
+                    tau_[i][j] = tau_[j][i] = (dtb(gen) < pr ? time_delay : 0);
+                }
             }
         }
 
