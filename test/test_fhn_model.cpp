@@ -1,8 +1,8 @@
 /**
  * @file test_fhn_model.cpp
- * @version v0.3
+ * @version v0.4
  * @author SHawnHardy
- * @date 2019-01-31
+ * @date 2019-02-04
  * @copyright MIT License
  */
 
@@ -12,6 +12,14 @@
 #include "fhn_model.h"
 #include "time_delay_matrix.h"
 #include "ws_network.h"
+
+TEST(FhnModelConfig , Initial) {
+    sh::FhnModelConfig config_1;
+    ASSERT_DOUBLE_EQ(config_1.noise_intensity, 0.001);
+
+    sh::FhnModelConfig config_2(0.002);
+    ASSERT_DOUBLE_EQ(config_2.noise_intensity, 0.002);
+}
 
 TEST(FhnModelConfigTest, Serialize) {
     sh::FhnModelConfig source;

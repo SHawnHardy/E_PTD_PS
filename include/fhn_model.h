@@ -1,6 +1,6 @@
 /**
  * @file fhn_model.h
- * @version v0.3
+ * @version v0.4
  * @author SHawnHardy
  * @date 2019-02-04
  * @copyright MIT License
@@ -23,6 +23,8 @@
 
 namespace sh {
     struct FhnModelConfig {
+        explicit FhnModelConfig(double noise_intensity = 0.001) : noise_intensity(noise_intensity) {}
+
         double epsilon = 0.01;
         double coupling_strength = 0.015;
         double systematic_param_a = 1.1;
@@ -201,7 +203,9 @@ namespace sh {
             }
             qsin /= data_num;
             qcos /= data_num;
-            return sqrt(qsin * qsin + qcos * qcos);
+            double result = sqrt(qsin * qsin + qcos * qcos);
+            (*result_osm_) << result;
+            return result;
         }
 
     private:
