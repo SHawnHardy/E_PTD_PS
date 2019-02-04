@@ -21,6 +21,28 @@ Effects of partial time delays on phase synchronization in Watts-Strogatz small-
 控制，数据可视化由Python处理
 
 ## 进度
-* ws_network(v0.3) **Testing...**
-* time_delay_matrix(v0.1) **Testing...**
-* fhn_model **In development**
+
+* ws_network(v0.4) **Testing...**
+* time_delay_matrix(v0.3) **Testing...**
+* fhn_model(v0.6) **In development...**
+
+## 代码质量
+
+整个项目由[Travis CI](https://travis-ci.org)提供持续集成服务，[Codecov](https://codecov.io)提供单元测试代码覆盖率信息
+
+测试代码(test文件夹)仅针对include文件夹，代码覆盖率信息也仅包含这两个文件夹
+
+### 单个文件的代码质量信息
+
+* ws_network.h
+  * 保证在Reconnection_Pr_小于0时为规则网络
+  * Reconnection_Pr_大于0时，根据论文：**Eur. Phys. J. B 13, 547–560 (2000)** 
+  On the properties of small-world network models 
+  (A. Barrat; M. Weigt)
+  验证其聚集系数与Reconnection_Pr_的关系符合预期
+* time_delay_matrix.h 基本可靠
+* fhn_model.h 尚未完成
+
+## 许可信息
+
+除部分明确标明的文件外，均为[MIT许可证](https://opensource.org/licenses/MIT)
