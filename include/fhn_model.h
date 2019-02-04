@@ -1,14 +1,15 @@
 /**
  * @file fhn_model.h
- * @version v0.2
+ * @version v0.3
  * @author SHawnHardy
- * @date 2019-02-03
+ * @date 2019-02-04
  * @copyright MIT License
  */
 
 #ifndef E_PTD_PS_FHN_MODEL_H
 #define E_PTD_PS_FHN_MODEL_H
 
+#include <cassert>
 #include <cmath>
 #include <cstring>
 #include <algorithm>
@@ -35,9 +36,9 @@ namespace sh {
         osm << "epsilon: " << Config.epsilon
             << " coupling_strength: " << Config.coupling_strength
             << " systematic_param_a: " << Config.systematic_param_a << std::endl;
-        osm << " subthreshold_signal_amplitude: " << Config.subthreshold_signal_amplitude
+        osm << "subthreshold_signal_amplitude: " << Config.subthreshold_signal_amplitude
             << " subthreshold_signal_period: " << Config.subthreshold_signal_period << std::endl;
-        osm << " pulse_threshold: " << Config.pulse_threshold
+        osm << "pulse_threshold: " << Config.pulse_threshold
             << " noise_intensity: " << Config.noise_intensity << std::endl;
     };
 
