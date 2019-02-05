@@ -1,8 +1,8 @@
 /**
  * @file tau_matrix.h
- * @version v0.4
+ * @version v0.5
  * @author SHawnHardy
- * @date 2019-01-31
+ * @date 2019-02-05
  * @copyright MIT License
  */
 
@@ -46,8 +46,7 @@ namespace sh {
             std::uniform_real_distribution<> dtb(0.0, 1.0);
 
             for (int i = 0; i < Size_; ++i) {
-                tau_[i][i] = 0;
-                for (int j = (i + 1); j < Size_; ++j) {
+                for (int j = i; j < Size_; ++j) {
                     tau_[i][j] = tau_[j][i] = (dtb(gen) < pr ? time_delay : 0);
                 }
             }
