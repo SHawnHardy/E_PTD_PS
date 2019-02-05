@@ -1,8 +1,8 @@
 /**
  * @file test_time_delay_matrix.cpp
- * @version v0.4
+ * @version v0.5
  * @author SHawnHardy
- * @date 2019-01-31
+ * @date 2019-02-05
  * @copyright MIT License
  */
 
@@ -77,11 +77,7 @@ TEST(TimeDelayMatrixTest, PartialTimeDelay) {
 
     for (int i = 0; i < Size; ++i) {
         for (int j = 0; j < Size; ++j) {
-            if (i == j) {
-                ASSERT_EQ(sum[i][j], 0);
-            } else {
-                ASSERT_NEAR(expect, sum[i][j], expect * 0.05);
-            }
+            ASSERT_NEAR(expect, sum[i][j], expect * 0.05);
         }
     }
 }
