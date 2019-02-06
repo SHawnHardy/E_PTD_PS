@@ -1,5 +1,5 @@
 # Clion
-/.idea
+.idea
 /cmake-build-debug
 
 # Ext
@@ -7,3 +7,9 @@
 
 # Build
 /build
+
+# Python Env
+/python/venv
+
+# pychache
+__pycache__
