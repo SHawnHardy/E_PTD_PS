@@ -1,6 +1,6 @@
 /**
  * @file test_fhn_model.cpp
- * @version v0.7
+ * @version v0.8
  * @author SHawnHardy
  * @date 2019-02-07
  * @copyright MIT License

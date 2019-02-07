@@ -1,6 +1,6 @@
 /**
  * @file fhn_model.h
- * @version v0.7
+ * @version v0.8
  * @author SHawnHardy
  * @date 2019-02-07
  * @copyright MIT License
@@ -206,10 +206,9 @@ namespace sh {
 
                 if (now >= steady_time_) {
                     mean_x /= Size_;
-                    qsin +=
-                            2.0 * mean_x * sin((2.0 * now) * (PI * step_ / Config_->subthreshold_signal_period));
-                    qcos +=
-                            2.0 * mean_x * cos((2.0 * now) * (PI * step_ / Config_->subthreshold_signal_period));
+                    double tmp = (2.0 * PI * now * step_ / Config_->subthreshold_signal_period);
+                    qsin += 2.0 * mean_x * sin(tmp);
+                    qcos += 2.0 * mean_x * cos(tmp);
                     data_num++;
                 }
             }
@@ -251,22 +250,23 @@ namespace sh {
 
         void getDx() {
             for (int i = 0; i < Size_; ++i) {
-                double xi = *current_[i], yi = y_[i];
-                dx_[i] = xi - xi * xi * xi / 3.0 - yi;
+                double xi = *current_[i];
+                dx_[i] = xi - xi * xi * xi / 3.0 - y_[i];
                 double coupling_term = 0.0;
 
                 auto edges = Ws_Network_->get_edges(i);
-                while (edges.first != edges.second) {
-                    int t = *(edges.first);
-                    double xt = *x_with_delay_[i][t];
+                auto edges_start = edges.first;
+                auto edges_end = edges.second;
+                while (edges_start != edges_end) {
+                    int t = *(edges_start);
+                    coupling_term += (*x_with_delay_[i][t] - xi);
 
                     if (x_with_delay_[i][t] == x_[t] + buffer_length_[t] - 1) {
                         x_with_delay_[i][t] = x_[t];
                     } else {
                         x_with_delay_[i][t]++;
                     }
-                    coupling_term += (xt - xi);
-                    edges.first++;
+                    edges_start++;
                 }
                 dx_[i] += Config_->coupling_strength * coupling_term;
                 dx_[i] /= Config_->epsilon;
@@ -274,10 +274,11 @@ namespace sh {
         }
 
         void getDy(int now) {
+            double addon = Config_->systematic_param_a +
+                           Config_->subthreshold_signal_amplitude *
+                           sin((2 * now) * (PI / Config_->subthreshold_signal_period * step_));
             for (int i = 0; i < Size_; ++i) {
-                dy_[i] = *current_[i] + Config_->systematic_param_a;
-                dy_[i] += Config_->subthreshold_signal_amplitude *
-                          sin((2 * now) * (PI / Config_->subthreshold_signal_period * step_));
+                dy_[i] = *current_[i] + addon;
             }
         }
     };
