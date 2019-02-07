@@ -1,8 +1,8 @@
 /**
  * @file tau_matrix.h
- * @version v0.5
+ * @version v0.6
  * @author SHawnHardy
- * @date 2019-02-05
+ * @date 2019-02-07
  * @copyright MIT License
  */
 
@@ -19,7 +19,7 @@ namespace sh {
     public:
         const int Size_;
 
-        explicit TimeDelayMatrix(const int size) : Size_(size) {
+        explicit TimeDelayMatrix(int size) : Size_(size) {
             tau_ = new int *[Size_];
             for (int i = 0; i < Size_; ++i) {
                 tau_[i] = new int[Size_]();
@@ -52,7 +52,7 @@ namespace sh {
             }
         }
 
-        int *operator[](const int &x) const {
+        inline int *operator[](int x) const {
             return tau_[x];
         }
 
