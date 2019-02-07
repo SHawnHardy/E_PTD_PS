@@ -1,6 +1,6 @@
 /**
  * @file fhn_model.h
- * @version v0.8
+ * @version v0.9
  * @author SHawnHardy
  * @date 2019-02-07
  * @copyright MIT License
@@ -63,21 +63,21 @@ namespace sh {
                 Ws_Network_(Ws_Network), Tau_Matrix_(Tau_Matrix), Config_(Fhn_Config),
                 Size_(Ws_Network->Num_Vertices_), result_osm_(result_osm) {
             assert(Size_ <= Tau_Matrix_->Size_);
-            buffer_length_ = new int[Size_];
+            buffer_length_ = new int[Size_ + 1];
             current_ = new double *[Size_];
             next_ = new double *[Size_];
             x_with_delay_ = new double **[Size_];
-            x_ = new double *[Size_];
+
+            buffer_length_[0] = 0;
             for (int i = 0; i < Size_; ++i) {
                 int buf_len = 0;
                 for (int j = 0; j < Size_; ++j) {
                     buf_len = std::max(buf_len, (*Tau_Matrix_)[j][i]);
                 }
-                buffer_length_[i] = buf_len + 2;
-                x_[i] = new double[buf_len + 2];
+                buffer_length_[i + 1] = buffer_length_[i] + buf_len + 2;
                 x_with_delay_[i] = new double *[Size_];
             }
-
+            x_ = new double[end_time_ - start_time_ + buffer_length_[Size_]];
             y_ = new double[Size_];
             dx_ = new double[Size_];
             dy_ = new double[Size_];
@@ -85,7 +85,6 @@ namespace sh {
 
         ~FhnModelSolver() {
             for (int i = 0; i < Size_; ++i) {
-                delete[] x_[i];
                 delete[] x_with_delay_[i];
             }
             delete[] x_;
@@ -104,6 +103,8 @@ namespace sh {
             steady_time_ = steady_time;
             end_time_ = end_time;
             step_ = step_duration;
+            delete[] x_;
+            x_ = new double[end_time_ - start_time_ + buffer_length_[Size_]];
         }
 
         void enableLogX(std::ostream *osm, bool (*log_x_filter)(int)) {
@@ -153,10 +154,11 @@ namespace sh {
             std::uniform_real_distribution<> dtb(0, 1);
 
             std::fill(y_, y_ + Size_, 0.0);
+            std::fill(x_, x_ + buffer_length_[Size_], 0.0);
+
             for (int i = 0; i < Size_; ++i) {
-                std::fill(x_[i], x_[i] + buffer_length_[i], 0.0);
-                next_[i] = x_[i];
-                current_[i] = x_[i] + (buffer_length_[i] - 1);
+                next_[i] = x_ + buffer_length_[Size_] - 1 - buffer_length_[i];
+                current_[i] = next_[i] - 1;
                 for (int j = 0; j < Size_; ++j) {
                     x_with_delay_[j][i] = current_[i] - (*Tau_Matrix_)[j][i];
                 }
@@ -197,11 +199,7 @@ namespace sh {
 
                     }
                     current_[i] = next_[i];
-                    if (next_[i] == x_[i] + buffer_length_[i] - 1) {
-                        next_[i] = x_[i];
-                    } else {
-                        next_[i]++;
-                    }
+                    next_[i]++;
                 }
 
                 if (now >= steady_time_) {
@@ -229,7 +227,7 @@ namespace sh {
 
         std::string info_ = std::string("");
 
-        double **x_ = nullptr;
+        double *x_ = nullptr;
         int *buffer_length_ = nullptr;
         double **current_ = nullptr;
         double **next_ = nullptr;
@@ -261,11 +259,7 @@ namespace sh {
                     int t = *(edges_start);
                     coupling_term += (*x_with_delay_[i][t] - xi);
 
-                    if (x_with_delay_[i][t] == x_[t] + buffer_length_[t] - 1) {
-                        x_with_delay_[i][t] = x_[t];
-                    } else {
-                        x_with_delay_[i][t]++;
-                    }
+                    x_with_delay_[i][t]++;
                     edges_start++;
                 }
                 dx_[i] += Config_->coupling_strength * coupling_term;
