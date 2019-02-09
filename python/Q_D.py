@@ -3,9 +3,9 @@
 #
 #########################
 # file Q_D.py
-# @version v0.3
+# @version v0.4
 # @author SHawnHardy
-# @date 2019-02-08
+# @date 2019-02-09
 # @copyright MIT License
 #########################
 
@@ -21,7 +21,7 @@ try:
     df = pd.read_csv(config.data_path + 'Q_D.csv')
 except FileNotFoundError:
     print("Q_D.csv not found. It will be created")
-    df = pd.DataFrame({'noise intensity': [x * 0.001 for x in range(1, 101)],
+    df = pd.DataFrame({'noise intensity': [x * 0.001 for x in range(501)],
                        'Q': np.nan
                        })
 
