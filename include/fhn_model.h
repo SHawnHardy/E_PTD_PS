@@ -1,8 +1,8 @@
 /**
  * @file fhn_model.h
- * @version v0.9
+ * @version v0.10
  * @author SHawnHardy
- * @date 2019-02-07
+ * @date 2019-02-10
  * @copyright MIT License
  */
 
@@ -137,12 +137,12 @@ namespace sh {
             (*result_osm_) << info_;
             if (log_pulse_) {
                 (*log_pulse_osm_) << std::setprecision(8) << std::setiosflags(std::ios::fixed);
-                (*log_pulse_osm_) << info_ << std::endl;
+                (*log_pulse_osm_) << info_;
                 (*log_pulse_osm_) << "time(s)," << "neuron," << "x_neu(t)," << "x_neu(t + dt)" << std::endl;
             }
             if (log_x_) {
                 (*log_x_osm_) << std::setprecision(8) << std::setiosflags(std::ios::fixed);
-                (*log_x_osm_) << info_ << std::endl;
+                (*log_x_osm_) << info_;
                 (*log_x_osm_) << "time(s),";
                 for (int i = 0; i < Size_; ++i) {
                     (*log_x_osm_) << i << (i == (Size_ - 1) ? '\n' : ',');
