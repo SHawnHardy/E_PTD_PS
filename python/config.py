@@ -3,13 +3,13 @@
 #
 #########################
 # file config.py
-# @version v0.5
+# @version v0.6
 # @author SHawnHardy
 # @date 2019-02-10
 # @copyright MIT License
 #########################
 
 solve_command = '../build/solve'
-data_path = './data/'
+data_path = './data'
 
 num_processes = 4

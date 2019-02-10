@@ -1,13 +1,15 @@
 /**
  * @file solve.cpp
- * @version v0.2
+ * @version v0.3
  * @author SHawnHardy
- * @date 2019-02-05
+ * @date 2019-02-10
  * @copyright MIT License
  */
 
 #include <getopt.h>
 #include <iostream>
+#include <fstream>
+#include <string>
 
 #include "fhn_model.h"
 #include "time_delay_matrix.h"
@@ -33,7 +35,11 @@ struct GlobalArgs {
 
 //    fhn_model_config
     double noise_intensity = 0.001;
-} global_args;
+
+//    log_pulse
+    bool log_pulse = false;
+    std::string log_pulse_filename = std::string("");
+};
 
 
 static const char *optString = "vs:D:T:P:";
@@ -44,10 +50,12 @@ static const struct option long_opts[] = {
         {"noise_intensity",       1, nullptr, 'D'},
         {"tau",                   1, nullptr, 'T'},
         {"partial_time_delay_pr", 1, nullptr, 'P'},
-        {"dry_run",               0, nullptr, 101}
+        {"log_pulse",             1, nullptr, 301},
+        {"dry_run",               0, nullptr, 401}
 };
 
 int main(int argc, char **argv) {
+    GlobalArgs global_args;
     int opt;
     while ((opt = getopt_long(argc, argv, optString, long_opts, nullptr)) != -1) {
         switch (opt) {
@@ -68,9 +76,13 @@ int main(int argc, char **argv) {
                 global_args.time_delay_matrix_type = global_args.partial;
                 global_args.partial_time_delay_pr = std::atof(optarg);
                 break;
-            case 101:
+            case 401:
                 global_args.dry_run = true;
                 global_args.verbose = true;
+                break;
+            case 301:
+                global_args.log_pulse = true;
+                global_args.log_pulse_filename = std::string(optarg);
                 break;
             case '?':
                 std::cout << "unknown option" << std::endl;
@@ -94,6 +106,11 @@ int main(int argc, char **argv) {
             default:
                 std::cout << "error" << std::endl;
         }
+
+        std::cout << "log pulse: " << (global_args.log_pulse ? "ENABLED" : "DISABLED") << std::endl;
+        if (global_args.log_pulse) {
+            std::cout << "log_pulse_filename: " << global_args.log_pulse_filename << std::endl;
+        }
     }
     if (global_args.dry_run) {
         return 0;
@@ -110,6 +127,10 @@ int main(int argc, char **argv) {
 
     sh::FhnModelConfig config(global_args.noise_intensity);
     sh::FhnModelSolver solver(&network, &tau, &config, &(std::cout));
+    if (global_args.log_pulse) {
+        std::ostream *log_pulse_osm = new std::ofstream(global_args.log_pulse_filename.c_str(), std::ios::out);
+        solver.enableLogPulse(log_pulse_osm);
+    }
     solver.solve();
     return 0;
 }
