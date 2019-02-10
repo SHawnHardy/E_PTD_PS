@@ -3,7 +3,7 @@
 #
 #########################
 # file ctrl.py
-# @version v0.1
+# @version v0.2
 # @author SHawnHardy
 # @date 2019-02-10
 # @copyright MIT License
@@ -26,6 +26,7 @@ class Ctrl:
         self.param_label = param_label
         self.result_label = result_label
         self.csv_path = csv_path
+        self.df.info()
 
     def get_task(self):
         task_index = 0
@@ -45,7 +46,7 @@ class Ctrl:
         result = np.mean(result)
         print(result)
         for label, data in result.iteritems():
-            self.df.loc[self.df_index[index]][label] = data
+            self.df.loc[self.df_index[index], label] = data
 
         self.df = self.df.round(6)
         self.df.to_csv(self.csv_path, index=False, float_format='%.6f')
