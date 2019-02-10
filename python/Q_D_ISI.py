@@ -9,8 +9,8 @@
 # @copyright MIT License
 #########################
 
-import config
-from ctrl import Ctrl
+from tools import config
+from tools.ctrl import Ctrl
 
 import matplotlib.pyplot as plt
 import multiprocessing
