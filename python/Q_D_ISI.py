@@ -11,12 +11,14 @@
 
 from tools import config
 from tools.ctrl import Ctrl
+from tools.pulse import Pulse
 
 import matplotlib.pyplot as plt
 import multiprocessing
 import numpy as np
 import os
 import pandas as pd
+import progressbar as pgb
 import subprocess
 
 if not os.path.exists(config.data_path + '/Q_D_ISI'):
@@ -43,7 +45,7 @@ def solve(info):
     result = subprocess.check_output(
         [config.solve_command,
          '-D' + str(_task['noise intensity']),
-         '--log_pulse', config.data_path + '/Q_D_ISI/D_%f_%d_pulse.csv' % (_task['noise intensity'], _num),
+         '--log_pulse', config.data_path + '/Q_D_ISI/D_%.6f_%d_pulse.csv' % (_task['noise intensity'], _num),
          ]
     )
     queue.put((_index, pd.Series({'Q': float(result)})))
@@ -62,8 +64,31 @@ while not no_task_left:
     t = queue.get()
     no_task_left = ctrl.add(*t)
 
-plt.figure()
 ctrl.df.plot(x='noise intensity', y='Q')
-plt.show()
 
-# todo proc ISI
+try:
+    df = pd.read_csv(config.data_path + '/Q_D_ISI/ISI.csv')
+except FileNotFoundError:
+    print("ISI.csv not found. It will be created")
+    df = pd.DataFrame({'noise intensity': [x * 0.001 for x in range(301)],
+                       'ISI': np.nan
+                       })
+
+df = df.round(6)
+
+bar = pgb.ProgressBar()
+
+for index in bar(range(len(df))):
+    if not np.isnan(df.loc[index, 'ISI']):
+        continue
+    isi = []
+    for num in range(ctrl.num_times):
+        p = Pulse(
+            df_path=config.data_path + '/Q_D_ISI/D_%.6f_%d_pulse.csv' % (df.loc[index, 'noise intensity'], num))
+        isi.append(p.isi())
+    df.loc[index, 'ISI'] = np.nanmean(isi)
+    df.to_csv(config.data_path + '/Q_D_ISI/ISI.csv', index=False, float_format='%.6f')
+
+
+df.plot(x='noise intensity', y='ISI')
+plt.show()

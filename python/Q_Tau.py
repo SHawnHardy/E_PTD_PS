@@ -14,6 +14,7 @@ from tools.ctrl import Ctrl
 
 from itertools import chain
 import multiprocessing
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import subprocess
@@ -25,11 +26,11 @@ try:
     df = pd.read_csv(config.data_path + '/Q_Tau.csv')
 except FileNotFoundError:
     print("Q_D.csv not found. It will be created")
-    time_delay, noise_intensity = np.meshgrid(time_delay, noise_intensity)
-    noise_intensity = list(chain(*noise_intensity))
-    time_delay = list(chain(*time_delay))
-    df = pd.DataFrame({'noise intensity': noise_intensity,
-                       'time delay': time_delay,
+    time_delay_m, noise_intensity_m = np.meshgrid(time_delay, noise_intensity)
+    noise_intensity_m = list(chain(*noise_intensity_m))
+    time_delay_m = list(chain(*time_delay_m))
+    df = pd.DataFrame({'noise intensity': noise_intensity_m,
+                       'time delay': time_delay_m,
                        'Q': np.nan
                        })
 
@@ -65,4 +66,13 @@ while not no_task_left:
     t = queue.get()
     no_task_left = ctrl.add(*t)
 
-# todo plot
+df = ctrl.df
+ndf = {'time delay': time_delay}
+for D in noise_intensity:
+    ndf['D=%.6f' % (D,)] = (df.loc[df["noise intensity"] == D, "Q"]).reset_index(drop=True)
+
+ndf = pd.DataFrame(ndf)
+
+ndf.plot(x="time delay")
+plt.legend(loc='best')
+plt.show()
