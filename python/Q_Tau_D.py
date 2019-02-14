@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 #########################
-# file Q_Tau.py
-# @version v0.1
+# file Q_Tau_D.py
+# @version v0.2
 # @author SHawnHardy
-# @date 2019-02-10
+# @date 2019-02-14
 # @copyright MIT License
 #########################
 
@@ -23,9 +23,9 @@ noise_intensity = [0.015, 0.134, 0.160]
 time_delay = [x * 100 for x in range(301)]
 
 try:
-    df = pd.read_csv(config.data_path + '/Q_Tau.csv')
+    df = pd.read_csv(config.data_path + '/Q_Tau_D.csv')
 except FileNotFoundError:
-    print("Q_D.csv not found. It will be created")
+    print("Q_Tau_D.csv not found. It will be created")
     time_delay_m, noise_intensity_m = np.meshgrid(time_delay, noise_intensity)
     noise_intensity_m = list(chain(*noise_intensity_m))
     time_delay_m = list(chain(*time_delay_m))
@@ -35,7 +35,7 @@ except FileNotFoundError:
                        })
 
 df = df.round(6)
-ctrl = Ctrl(df, ['noise intensity', 'time delay'], ['Q'], config.data_path + '/Q_Tau.csv')
+ctrl = Ctrl(df, ['noise intensity', 'time delay'], ['Q'], config.data_path + '/Q_Tau_D.csv')
 ctrl.num_times = 10
 
 manager = multiprocessing.Manager()
