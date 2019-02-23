@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 #########################
-# file Q_Tau.py
+# file Q_Tau_P.py
 # @version v0.1
 # @author SHawnHardy
-# @date 2019-02-10
+# @date 2019-02-14
 # @copyright MIT License
 #########################
 
@@ -19,23 +19,27 @@ import numpy as np
 import pandas as pd
 import subprocess
 
-noise_intensity = [0.015, 0.134, 0.160]
+noise_intensity = 0.015
 time_delay = [x * 100 for x in range(301)]
+# partial_time_delay_pr = [x * 0.01 for x in range(11)] + [x * 0.05 for x in range(3, 11)]
+partial_time_delay_pr = [0.01, 0.03, 0.05, 0.1, 0.3, 0.5]
 
 try:
-    df = pd.read_csv(config.data_path + '/Q_Tau.csv')
+    df = pd.read_csv(config.data_path + '/Q_Tau_P.csv')
 except FileNotFoundError:
-    print("Q_D.csv not found. It will be created")
-    time_delay_m, noise_intensity_m = np.meshgrid(time_delay, noise_intensity)
-    noise_intensity_m = list(chain(*noise_intensity_m))
+    print("Q_Tau_P.csv not found. It will be created")
+    time_delay_m, partial_time_delay_pr_m = np.meshgrid(time_delay, partial_time_delay_pr)
+    partial_time_delay_pr_m = list(chain(*partial_time_delay_pr_m))
     time_delay_m = list(chain(*time_delay_m))
-    df = pd.DataFrame({'noise intensity': noise_intensity_m,
+    df = pd.DataFrame({'noise intensity': noise_intensity,
                        'time delay': time_delay_m,
+                       'partial time delay probability': partial_time_delay_pr_m,
                        'Q': np.nan
                        })
 
 df = df.round(6)
-ctrl = Ctrl(df, ['noise intensity', 'time delay'], ['Q'], config.data_path + '/Q_Tau.csv')
+ctrl = Ctrl(df, ['noise intensity', 'time delay', 'partial time delay probability'], ['Q'],
+            config.data_path + '/Q_Tau_P.csv')
 ctrl.num_times = 10
 
 manager = multiprocessing.Manager()
@@ -47,7 +51,8 @@ def solve(info):
     result = subprocess.check_output([
         config.solve_command,
         '-D' + str(_task['noise intensity']),
-        '-T' + str(_task['time delay'])
+        '-T' + str(_task['time delay']),
+        '-P' + str(_task['partial time delay probability'])
     ])
     queue.put((_index, pd.Series({'Q': float(result)})))
 
@@ -68,8 +73,8 @@ while not no_task_left:
 
 df = ctrl.df
 ndf = {'time delay': time_delay}
-for D in noise_intensity:
-    ndf['D=%.6f' % (D,)] = (df.loc[df["noise intensity"] == D, "Q"]).reset_index(drop=True)
+for P in partial_time_delay_pr:
+    ndf['P=%.6f' % (P,)] = (df.loc[df["partial time delay probability"] == P, "Q"]).reset_index(drop=True)
 
 ndf = pd.DataFrame(ndf)
 

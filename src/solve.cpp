@@ -119,9 +119,11 @@ int main(int argc, char **argv) {
     sh::WsNetwork network(global_args.size, global_args.regular_k, global_args.reconnection_pr);
 
     sh::TimeDelayMatrix tau(global_args.size);
-    if (global_args.time_delay_matrix_type == global_args.all_the_same) {
-        if (global_args.time_delay > 0) {
+    if (global_args.time_delay > 0) {
+        if (global_args.time_delay_matrix_type == global_args.all_the_same) {
             tau.allTheSame(global_args.time_delay);
+        } else if (global_args.time_delay_matrix_type == global_args.partial) {
+            tau.partialTimeDelay(global_args.partial_time_delay_pr, global_args.time_delay);
         }
     }
 
