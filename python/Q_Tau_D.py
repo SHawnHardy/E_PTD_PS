@@ -3,76 +3,81 @@
 #
 #########################
 # file Q_Tau_D.py
-# @version v0.2
+# @version v0.3
 # @author SHawnHardy
-# @date 2019-02-14
+# @date 2019-03-01
 # @copyright MIT License
 #########################
 
 from tools import config
 from tools.ctrl import Ctrl
+from tools.solve import solve
 
-from itertools import chain
-import multiprocessing
 import matplotlib.pyplot as plt
+import multiprocessing
 import numpy as np
 import pandas as pd
-import subprocess
+import tqdm
+
+csv_path = config.data_path + '/Q_Tau_D.csv'
 
 noise_intensity = [0.015, 0.134, 0.160]
 time_delay = [x * 100 for x in range(301)]
 
 try:
-    df = pd.read_csv(config.data_path + '/Q_Tau_D.csv')
+    df = pd.read_csv(csv_path)
 except FileNotFoundError:
-    print("Q_Tau_D.csv not found. It will be created")
+    print('Q_Tau_D.csv not found. It will be created')
     time_delay_m, noise_intensity_m = np.meshgrid(time_delay, noise_intensity)
-    noise_intensity_m = list(chain(*noise_intensity_m))
-    time_delay_m = list(chain(*time_delay_m))
+    noise_intensity_m = noise_intensity_m.flatten()
+    time_delay_m = time_delay_m.flatten()
     df = pd.DataFrame({'noise intensity': noise_intensity_m,
                        'time delay': time_delay_m,
-                       'Q': np.nan
+                       'Q': np.nan,
+                       'Qsin': np.nan,
+                       'Qcos': np.nan,
+                       'ISI': np.nan
                        })
 
 df = df.round(6)
-ctrl = Ctrl(df, ['noise intensity', 'time delay'], ['Q'], config.data_path + '/Q_Tau_D.csv')
-ctrl.num_times = 10
+ctrl = Ctrl(df, csv_path)
 
 manager = multiprocessing.Manager()
 queue = manager.Queue()
 
 
-def solve(info):
-    _index, _task = info
-    result = subprocess.check_output([
-        config.solve_command,
-        '-D' + str(_task['noise intensity']),
-        '-T' + str(_task['time delay'])
-    ])
-    queue.put((_index, pd.Series({'Q': float(result)})))
+def worker(info):
+    _task_index, _task = info
+    queue.put((_task_index, solve(_task)[0]))
 
 
 pool = multiprocessing.Pool(config.num_processes)
 
-no_task_left = True
-for index, task in ctrl.get_task():
-    no_task_left = False
-    for i in range(ctrl.num_times):
-        pool.apply_async(solve, ((index, task),))
+num_task = len(df)
+num_task_left = 0
+for task_index, task in ctrl.get_task():
+    num_task_left += 1
+    for _ in range(ctrl.num_times):
+        pool.apply_async(worker, ((task_index, task),))
 
 pool.close()
 
-while not no_task_left:
-    t = queue.get()
-    no_task_left = ctrl.add(*t)
+with tqdm.tqdm(total=num_task, initial=num_task - num_task_left) as pbar:
+    while num_task_left > 0:
+        if ctrl.add(*(queue.get())):
+            num_task_left -= 1
+            pbar.update(1)
 
 df = ctrl.df
-ndf = {'time delay': time_delay}
+Q_df = {'time delay': time_delay}
+ISI_df = {'time delay': time_delay}
 for D in noise_intensity:
-    ndf['D=%.6f' % (D,)] = (df.loc[df["noise intensity"] == D, "Q"]).reset_index(drop=True)
+    Q_df['D=%.6f' % (D,)] = (df.loc[df['noise intensity'] == D, 'Q']).reset_index(drop=True)
+    ISI_df['D=%.6f' % (D,)] = (df.loc[df['noise intensity'] == D, 'ISI']).reset_index(drop=True)
 
-ndf = pd.DataFrame(ndf)
+Q_df = pd.DataFrame(Q_df)
+ISI_df = pd.DataFrame(ISI_df)
 
-ndf.plot(x="time delay")
-plt.legend(loc='best')
+Q_df.plot(x='time delay')
+ISI_df.plot(x='time delay')
 plt.show()
