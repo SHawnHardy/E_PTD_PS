@@ -1,8 +1,8 @@
 /**
  * @file fhn_model.h
- * @version v0.10
+ * @version v0.11
  * @author SHawnHardy
- * @date 2019-02-10
+ * @date 2019-02-27
  * @copyright MIT License
  */
 
@@ -81,6 +81,8 @@ namespace sh {
             y_ = new double[Size_];
             dx_ = new double[Size_];
             dy_ = new double[Size_];
+            first_pulse_time_ = new int[Size_];
+            last_pulse_time_ = new int[Size_];
         }
 
         ~FhnModelSolver() {
@@ -96,6 +98,8 @@ namespace sh {
             delete[] y_;
             delete[] dx_;
             delete[] dy_;
+            delete[] first_pulse_time_;
+            delete[] last_pulse_time_;
         }
 
         void set_time(int start_time, int steady_time, int end_time, double step_duration = 0.001) {
@@ -155,6 +159,8 @@ namespace sh {
 
             std::fill(y_, y_ + Size_, 0.0);
             std::fill(x_, x_ + buffer_length_[Size_], 0.0);
+            std::fill(first_pulse_time_, first_pulse_time_ + Size_, -1);
+            std::fill(last_pulse_time_, last_pulse_time_ + Size_, -1);
 
             for (int i = 0; i < Size_; ++i) {
                 next_[i] = x_ + buffer_length_[Size_] - 1 - buffer_length_[i];
@@ -166,6 +172,7 @@ namespace sh {
 
             double qsin = 0.0, qcos = 0.0;
             int data_num = 0;
+            long long int pulse_num = 0;
 
             for (int now = start_time_; now < end_time_; ++now) {
                 getDx();
@@ -185,14 +192,24 @@ namespace sh {
 
                     if (now >= steady_time_) {
                         mean_x += *next_[i];
-                        if (log_pulse_) {
-                            if (*current_[i] <= Config_->pulse_threshold &&
-                                *next_[i] > Config_->pulse_threshold) {
+                        if (*current_[i] <= Config_->pulse_threshold &&
+                            *next_[i] > Config_->pulse_threshold) {
+
+                            if (last_pulse_time_[i] > 0) {
+                                last_pulse_time_[i] = now;
+                                pulse_num++;
+                            } else {
+                                first_pulse_time_[i] = last_pulse_time_[i] = now;
+                            }
+
+                            if (log_pulse_) {
                                 (*log_pulse_osm_) << now * step_ << ',' << i << ','
                                                   << *current_[i] << ',' << *next_[i]
                                                   << std::endl;
                             }
                         }
+
+
                         if (log_x_this_time) {
                             (*log_x_osm_) << *next_[i] << (i == (Size_ - 1) ? '\n' : ',');
                         }
@@ -213,7 +230,12 @@ namespace sh {
             qsin /= data_num;
             qcos /= data_num;
             double result = sqrt(qsin * qsin + qcos * qcos);
-            (*result_osm_) << result;
+            long long int pulse_length = 0;
+            for (int i = 0; i < Size_; i++) {
+                pulse_length += (last_pulse_time_[i] - first_pulse_time_[i]);
+            }
+            (*result_osm_) << result << ' ' << qsin << ' ' << qcos << ' '
+                           << (double) pulse_length / (double) pulse_num * step_ << std::endl;
             return result;
         }
 
@@ -235,6 +257,8 @@ namespace sh {
         double *y_ = nullptr;
         double *dx_ = nullptr;
         double *dy_ = nullptr;
+        int *first_pulse_time_ = nullptr;
+        int *last_pulse_time_ = nullptr;
 
         double step_ = 0.001;
         int start_time_ = 0;
