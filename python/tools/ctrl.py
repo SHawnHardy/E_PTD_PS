@@ -38,6 +38,9 @@ class Ctrl:
         print(self.task[task_index].drop(['Q', 'Qsin', 'Qcos', 'ISI']))
         result = pd.DataFrame(self.result[task_index])
         print(result)
+        if np.count_nonzero(np.isnan(result['ISI'])) > self.num_times * 0.3:
+            print('ISI is invalid')
+            result['ISI'] = np.nan
         result = np.mean(result)
         print(result)
         for label, data in result.iteritems():
