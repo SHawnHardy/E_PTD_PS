@@ -17,15 +17,17 @@ import matplotlib.pyplot as plt
 import multiprocessing
 import numpy as np
 import pandas as pd
+import sys
 import tqdm
 
-csv_path = config.data_path + '/Q_D.csv'
 noise_intensity = [x * 0.001 for x in range(501)]
+
+csv_path = config.data_path + '/Q_D.csv'
 
 try:
     df = pd.read_csv(csv_path)
 except FileNotFoundError:
-    print('Q_D.csv not found. It will be created')
+    print('Q_D.csv not found. It will be created', file=sys.stderr)
     df = pd.DataFrame({'noise intensity': noise_intensity,
                        'Q': np.nan,
                        'Qsin': np.nan,

@@ -11,6 +11,7 @@
 
 import numpy as np
 import pandas as pd
+import sys
 
 
 class Ctrl:
@@ -21,7 +22,7 @@ class Ctrl:
     def __init__(self, df, csv_path, num_times=10):
         self.df = df
         self.csv_path = csv_path
-        self.df.info()
+        self.df.info(buf=sys.stderr)
         self.num_times = num_times
 
     def get_task(self):
@@ -43,6 +44,7 @@ class Ctrl:
             result['ISI'] = np.nan
         result = np.mean(result)
         print(result)
+        sys.stdout.flush()
         for label, data in result.iteritems():
             self.df.loc[self.df_index[task_index], label] = data
 

@@ -17,19 +17,19 @@ import matplotlib.pyplot as plt
 import multiprocessing
 import numpy as np
 import pandas as pd
+import sys
 import tqdm
 
 noise_intensity = 0.015
-
-csv_path = config.data_path + '/Q_Tau_P_D%.4f.csv' % (noise_intensity,)
-
 time_delay = [x * 100 for x in range(301)]
 partial_time_delay_pr = [0.01, 0.03, 0.05, 0.1, 0.3, 0.5]
+
+csv_path = config.data_path + '/Q_Tau_P_D%.4f.csv' % (noise_intensity,)
 
 try:
     df = pd.read_csv(csv_path)
 except FileNotFoundError:
-    print(csv_path + " not found. It will be created")
+    print(csv_path + " not found. It will be created", file=sys.stderr)
     time_delay_m, partial_time_delay_pr_m = np.meshgrid(time_delay, partial_time_delay_pr)
     partial_time_delay_pr_m = partial_time_delay_pr_m.flatten()
     time_delay_m = time_delay_m.flatten()
@@ -77,7 +77,6 @@ ISI_df = {'time delay': time_delay}
 for P in partial_time_delay_pr:
     Q_df['P=%.6f' % (P,)] = (df.loc[df["partial time delay probability"] == P, "Q"]).reset_index(drop=True)
     ISI_df['P=%.6f' % (P,)] = (df.loc[df["partial time delay probability"] == P, "ISI"]).reset_index(drop=True)
-
 
 Q_df = pd.DataFrame(Q_df)
 ISI_df = pd.DataFrame(ISI_df)

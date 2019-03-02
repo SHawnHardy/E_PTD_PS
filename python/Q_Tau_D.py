@@ -17,17 +17,18 @@ import matplotlib.pyplot as plt
 import multiprocessing
 import numpy as np
 import pandas as pd
+import sys
 import tqdm
-
-csv_path = config.data_path + '/Q_Tau_D.csv'
 
 noise_intensity = [0.015, 0.134, 0.160]
 time_delay = [x * 100 for x in range(301)]
 
+csv_path = config.data_path + '/Q_Tau_D.csv'
+
 try:
     df = pd.read_csv(csv_path)
 except FileNotFoundError:
-    print('Q_Tau_D.csv not found. It will be created')
+    print('Q_Tau_D.csv not found. It will be created', file=sys.stderr)
     time_delay_m, noise_intensity_m = np.meshgrid(time_delay, noise_intensity)
     noise_intensity_m = noise_intensity_m.flatten()
     time_delay_m = time_delay_m.flatten()
