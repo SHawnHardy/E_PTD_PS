@@ -46,7 +46,7 @@ struct GlobalArgs {
 };
 
 
-static const char *optString = "vs:D:T:P:N";
+static const char *optString = "vs:D:T:P:N::";
 
 static const struct option long_opts[] = {
         {"verbose",                        0, nullptr, 'v'},
@@ -54,7 +54,7 @@ static const struct option long_opts[] = {
         {"noise_intensity",                1, nullptr, 'D'},
         {"tau",                            1, nullptr, 'T'},
         {"partial_time_delay_pr",          1, nullptr, 'P'},
-        {"normal_distribution_time_delay", 0, nullptr, 'N'},
+        {"normal_distribution_time_delay", 2, nullptr, 'N'},
         {"log_pulse",                      1, nullptr, 301},
         {"dry_run",                        0, nullptr, 401}
 };
@@ -83,6 +83,9 @@ int main(int argc, char **argv) {
                 break;
             case 'N':
                 global_args.time_delay_matrix_type = global_args.normal_distribution;
+                if (optarg != nullptr) {
+                    global_args.normal_distribution_mean = std::atof(optarg);
+                }
                 break;
             case 401:
                 global_args.dry_run = true;
@@ -107,7 +110,7 @@ int main(int argc, char **argv) {
         if (global_args.time_delay_matrix_type == global_args.normal_distribution) {
             std::cout << "normal distribution time delay [0, " << global_args.normal_distribution_max << "] * 0.001 s"
                       << std::endl;
-            std::cout << "mean = " << global_args.normal_distribution_mean << std::endl
+            std::cout << "mean = " << global_args.normal_distribution_mean << " s" << std::endl
                       << "standard deviation = " << global_args.normal_distribution_standard_deviation << std::endl;
         } else {
             std::cout << "time delay = " << global_args.time_delay << " * 0.001 s ";
