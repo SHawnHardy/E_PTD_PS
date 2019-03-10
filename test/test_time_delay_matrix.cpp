@@ -1,8 +1,8 @@
 /**
  * @file test_time_delay_matrix.cpp
- * @version v0.6
+ * @version v0.7
  * @author SHawnHardy
- * @date 2019-02-07
+ * @date 2019-03-10
  * @copyright MIT License
  */
 
@@ -54,7 +54,8 @@ TEST(TimeDelayMatrixTest, PartialTimeDelay) {
     const int Size = 20;
     sh::TimeDelayMatrix m(Size);
     int sum[Size][Size];
-    m.partialTimeDelay(0.5, 1);
+    m.allTheSame(1);
+    m.partial(0.5);
 
     for (int i = 0; i < Size; ++i) {
         for (int j = 0; j < Size; ++j) {
@@ -65,7 +66,8 @@ TEST(TimeDelayMatrixTest, PartialTimeDelay) {
     }
 
     for (int cas = 0; cas < 9999; ++cas) {
-        m.partialTimeDelay(0.5, 1);
+        m.allTheSame(1);
+        m.partial(0.5);
         for (int i = 0; i < Size; ++i) {
             for (int j = 0; j < Size; ++j) {
                 sum[i][j] += m[i][j];
@@ -80,6 +82,12 @@ TEST(TimeDelayMatrixTest, PartialTimeDelay) {
             ASSERT_NEAR(expect, sum[i][j], expect * 0.05);
         }
     }
+}
+
+TEST(TimeDelayMatrixTest, normalDistributionTimeDelay) {
+    const int Size = 20;
+    sh::TimeDelayMatrix m(Size);
+    m.normalDistributionTimeDelay(3, 1, 30 * 1000);
 }
 
 TEST(TimeDelayMatrixTest, Serialize) {

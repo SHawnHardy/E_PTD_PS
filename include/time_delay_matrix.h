@@ -1,8 +1,8 @@
 /**
  * @file tau_matrix.h
- * @version v0.6
+ * @version v0.7
  * @author SHawnHardy
- * @date 2019-02-07
+ * @date 2019-03-10
  * @copyright MIT License
  */
 
@@ -40,14 +40,28 @@ namespace sh {
             }
         }
 
-        void partialTimeDelay(double pr, int time_delay) {
+        void partial(double pr) {
             std::random_device rd;
             std::mt19937 gen(rd());
             std::uniform_real_distribution<> dtb(0.0, 1.0);
 
             for (int i = 0; i < Size_; ++i) {
                 for (int j = i; j < Size_; ++j) {
-                    tau_[i][j] = tau_[j][i] = (dtb(gen) < pr ? time_delay : 0);
+                    if (dtb(gen) > pr)
+                        tau_[i][j] = tau_[j][i] = 0;
+                }
+            }
+        }
+
+        void normalDistributionTimeDelay(double mean, double standard_deviation,
+                                         int max_time_delay, int min_time_delay = 0, double step = 0.001) {
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::normal_distribution<> dtb(mean, standard_deviation);
+
+            for (int i = 0; i < Size_; ++i) {
+                for (int j = i; j < Size_; ++j) {
+                    tau_[i][j] = tau_[j][i] = std::min(std::max(int(dtb(gen) / step), min_time_delay), max_time_delay);
                 }
             }
         }
