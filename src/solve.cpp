@@ -1,8 +1,8 @@
 /**
  * @file solve.cpp
- * @version v0.3
+ * @version v0.4
  * @author SHawnHardy
- * @date 2019-02-10
+ * @date 2019-03-10
  * @copyright MIT License
  */
 

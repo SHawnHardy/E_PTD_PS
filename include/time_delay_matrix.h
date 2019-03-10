@@ -1,8 +1,8 @@
 /**
  * @file tau_matrix.h
- * @version v0.6
+ * @version v0.7
  * @author SHawnHardy
- * @date 2019-02-07
+ * @date 2019-03-10
  * @copyright MIT License
  */
 
