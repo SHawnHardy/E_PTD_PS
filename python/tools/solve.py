@@ -3,9 +3,9 @@
 #
 #########################
 # file solve.py
-# @version v0.2
+# @version v0.4
 # @author SHawnHardy
-# @date 2019-03-10
+# @date 2019-04-26
 # @copyright MIT License
 #########################
 
@@ -20,10 +20,19 @@ def solve(series, verbose=False, log_pulse=False, log_pulse_filename="pulse_log.
 
     if 'time delay' in series:
         command.append('-T' + str(series['time delay']))
-        if 'partial time delay probability' in series:
-            command.append('-P' + str(series['partial time delay probability']))
     elif 'normal distribution mean' in series:
         command.append('-N' + str(series['normal distribution mean']))
+        if 'normal distribution standard deviation' in series:
+            command.append('-S' + str(series['normal distribution standard deviation']))
+    elif 'uniform distribution mean' in series:
+        _mean = series['uniform distribution mean']
+        _standard_deviation = series['uniform distribution standard deviation']
+        _a, _b = _mean - (3 ** 0.5) * _standard_deviation, _mean + (3 ** 0.5) * _standard_deviation
+        command.append('-a' + str(_a))
+        command.append('-b' + str(_b))
+
+    if 'partial time delay probability' in series:
+        command.append('-P' + str(series['partial time delay probability']))
 
     if verbose:
         command.append('-v')
