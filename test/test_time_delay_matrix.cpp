@@ -1,8 +1,8 @@
 /**
  * @file test_time_delay_matrix.cpp
- * @version v0.7
+ * @version v0.8
  * @author SHawnHardy
- * @date 2019-03-10
+ * @date 2019-05-05
  * @copyright MIT License
  */
 
@@ -88,6 +88,12 @@ TEST(TimeDelayMatrixTest, normalDistributionTimeDelay) {
     const int Size = 20;
     sh::TimeDelayMatrix m(Size);
     m.normalDistributionTimeDelay(3, 1, 30 * 1000);
+}
+
+TEST(TimeDelayMatrixTest, uniformDistributionTimeDelay) {
+    const int Size = 20;
+    sh::TimeDelayMatrix m(Size);
+    m.uniformDistributionTimeDelay(0.0, 30.0);
 }
 
 TEST(TimeDelayMatrixTest, Serialize) {
