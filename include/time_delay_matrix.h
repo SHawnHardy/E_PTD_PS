@@ -1,8 +1,8 @@
 /**
  * @file tau_matrix.h
- * @version v0.7
+ * @version v0.8
  * @author SHawnHardy
- * @date 2019-03-10
+ * @date 2019-04-26
  * @copyright MIT License
  */
 
@@ -64,6 +64,19 @@ namespace sh {
                     tau_[i][j] = tau_[j][i] = std::min(std::max(int(dtb(gen) / step), min_time_delay), max_time_delay);
                 }
             }
+        }
+
+        void uniformDistributionTimeDelay(double a, double b, double step = 0.001) {
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<> dtb(a, b);
+
+            for (int i = 0; i < Size_; ++i) {
+                for (int j = i; j < Size_; ++j) {
+                    tau_[i][j] = tau_[j][i] = int(dtb(gen) / step);
+                }
+            }
+
         }
 
         inline int *operator[](int x) const {
